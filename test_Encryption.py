@@ -11,7 +11,7 @@ class TestEnc(unittest.TestCase):
 	
 	def test_genkeys(self):
 		print("Generating key.")
-		pk = Encryption.RSAGenKey()
+		pk = Encryption.AsymmetricEncryption.RSAGenKey()
 		self.assertEqual(str(type(pk)), "<class 'cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey'>")
 	
 	def test_loadkeys(self):
