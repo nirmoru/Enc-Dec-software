@@ -55,7 +55,7 @@ class AsymmetricEncryption:
 		return pub_key
 
 
-def AsymmEncFile(filename, pubkey='./keys/public_key.pem') -> None:
+def AsymmEncFile(filename, pubkey) -> None:
 	pub_key = AsymmetricEncryption.LoadPubKey(pubkey)
 	
 	with open(filename, 'rb') as f:
@@ -70,14 +70,16 @@ def AsymmEncFile(filename, pubkey='./keys/public_key.pem') -> None:
 		)
 	)
 	
-	with open(str(filename).split('.')[0] + '_enc.' + str(filename).split('.')[1], 'wb') as f:
+	out_filename = str(filename).split('/')[-1].split('.')[0] + '_enc.' + str(filename).split('/')[-1].split('.')[1]
+	
+	with open(out_filename, 'wb') as f:
 		enc = base64.b64encode(encrypted)
 		f.write(enc)
 
 	return None
 
 
-def AsymmDecFile(filename='testfile_enc.txt', privkey='./keys/asd.pem'):
+def AsymmDecFile(filename, privkey, output=None):
 	pk = AsymmetricEncryption(privkey)
 	private_key = pk.LoadPrivKey()
 	
@@ -94,7 +96,10 @@ def AsymmDecFile(filename='testfile_enc.txt', privkey='./keys/asd.pem'):
 		)
 	)
 	
-	with open('testfile_dec.txt', 'wb') as f:
+	if output is None:
+		output = str(filename).split('.')[0] + '_dec.' + str(filename).split('.')[1]
+	
+	with open(output, 'wb') as f:
 		f.write(dec)
 
 
