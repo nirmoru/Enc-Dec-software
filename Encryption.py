@@ -105,7 +105,7 @@ class AsymmetricEncDecFile:
 		)
 		
 		if self.output is None:
-			out_filename = '{0}_dec.{1}'.formate(str(self.filename).split('.')[0],
+			out_filename = '{0}_dec.{1}'.format(str(self.filename).split('.')[0],
 												 str(self.filename).split('.')[1])
 		else:
 			out_filename = self.output
