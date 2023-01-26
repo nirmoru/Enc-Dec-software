@@ -118,7 +118,7 @@ class AsymmetricEncDecFile:
 			f.write(dec)
 
 
-#### Symmetric Encryption From here ####
+# Symmetric Encryption From here
 class SymmetricEncryption:
 	def __init__(self, method, mode, auth=None):
 		self.method = method
@@ -301,3 +301,17 @@ def ReadConfigFile(config_file='cfg.ini'):
 	iv = cfg['_']['iv']
 	
 	return [base64.b64decode(key.encode()), base64.b64decode(iv.encode())]
+
+
+def DisplayConfigFile(config_file="cfg.ini"):
+	cfg = ConfigParser()
+	
+	try:
+		with open(config_file, encoding='utf-8') as f:
+			cfg.read_file(f)
+	except (FileNotFoundError, KeyError):
+		GenerateConfigFile(config_file)
+	
+	key = cfg['_']['key']
+	iv = cfg['_']['iv']
+	return [key, iv]
