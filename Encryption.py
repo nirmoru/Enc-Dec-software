@@ -3,9 +3,10 @@ import os
 from configparser import ConfigParser
 
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives import padding as sym_padding
 from cryptography.hazmat.primitives import serialization, hashes
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import padding as asymm_padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.serialization import load_pem_private_key, load_pem_public_key
 
@@ -59,9 +60,9 @@ class AsymmetricEncryptionPublicKey:
 
 
 class AsymmetricEncDecFile:
-	def __init__(self, filename, output=None):
+	def __init__(self, filename, output_folder):
 		self.filename = filename
-		self.output = output
+		self.output_folder = output_folder
 	
 	def AsymmetricEncFile(self, pub_key):
 		pub = AsymmetricEncryptionPublicKey(pub_key)
@@ -72,18 +73,15 @@ class AsymmetricEncDecFile:
 		
 		encrypted = public_key.encrypt(
 			f_read,
-			padding.OAEP(
-				mgf=padding.MGF1(algorithm=hashes.SHA256()),
+			asymm_padding.OAEP(
+				mgf=asymm_padding.MGF1(algorithm=hashes.SHA256()),
 				algorithm=hashes.SHA256(),
 				label=None
 			)
 		)
 		
-		if self.output is None:
-			out_filename = '{0}_enc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
-												str(self.filename).split('/')[-1].split('.')[1])
-		else:
-			out_filename = self.output
+		out_filename = os.path.join(self.output_folder, '{0}_enc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+																 str(self.filename).split('/')[-1].split('.')[1]))
 		
 		with open(out_filename, 'wb') as f:
 			enc = base64.b64encode(encrypted)
@@ -101,18 +99,15 @@ class AsymmetricEncDecFile:
 		
 		dec = private_key.decrypt(
 			file_content,
-			padding.OAEP(
-				mgf=padding.MGF1(algorithm=hashes.SHA256()),
+			asymm_padding.OAEP(
+				mgf=asymm_padding.MGF1(algorithm=hashes.SHA256()),
 				algorithm=hashes.SHA256(),
 				label=None
 			)
 		)
 		
-		if self.output is None:
-			out_filename = '{0}_dec.{1}'.format(str(self.filename).split('.')[0],
-												str(self.filename).split('.')[1])
-		else:
-			out_filename = self.output
+		out_filename = os.path.join(self.output_folder, '{0}_dec.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+																 str(self.filename).split('/')[-1].split('.')[1]))
 		
 		with open(out_filename, 'wb') as f:
 			f.write(dec)
@@ -170,13 +165,13 @@ class SymmetricPad:
 		self.size = 128
 	
 	def pad(self):
-		padder = padding.PKCS7(self.size).padder()
+		padder = sym_padding.PKCS7(self.size).padder()
 		padded_data = padder.update(self.data)
 		padded_data += padder.finalize()
 		return padded_data
 	
 	def unpad(self):
-		padder = padding.PKCS7(self.size).unpadder()
+		padder = sym_padding.PKCS7(self.size).unpadder()
 		unpadded_data = padder.update(self.data)
 		unpadded_data += padder.finalize()
 		return unpadded_data
@@ -200,11 +195,8 @@ class SymmetricEncDecFileWithAuth:
 		enc = SymmetricEncryptionWithAuth(method=self.method, mode=mode, tag=self.auth_tag)
 		enc_data, auth_tag_out = enc.EncryptWithAuth(f_read)
 		
-		if self.output is None:
-			out_filename = '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+		out_filename = '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
 												   str(self.filename).split('/')[-1].split('.')[1])
-		else:
-			out_filename = self.output
 		
 		encrypted = base64.b64encode(enc_data)
 		enc_auth_tag = base64.b64encode(auth_tag_out)
@@ -234,7 +226,7 @@ class SymmetricEncDecFileWithAuth:
 
 
 class SymmetricEncDecFileWithoutAuth:
-	def __init__(self, filename, output=None, config_file='cfg.ini'):
+	def __init__(self, filename, output, config_file='cfg.ini'):
 		self.filename = filename
 		self.key, self.iv = ReadConfigFile(config_file=config_file)
 		self.output = output
@@ -252,7 +244,14 @@ class SymmetricEncDecFileWithoutAuth:
 		cipher = SymmetricEncryption(method=self.method, mode=self.mode)
 		cipher_out = cipher.EncryptWithoutAuth(data=padded_data)
 		
-		with open(self.output, 'wb') as f:
+		if self.output is None:
+			out_filename = '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+											   str(self.filename).split('/')[-1].split('.')[1])
+		else:
+			out_filename = os.path.join(self.output, '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+											   str(self.filename).split('/')[-1].split('.')[1]))
+		
+		with open(out_filename, 'wb') as f:
 			encoded = base64.b64encode(cipher_out)
 			f.write(encoded)
 	
@@ -264,7 +263,14 @@ class SymmetricEncDecFileWithoutAuth:
 		decipher = SymmetricEncryption(method=self.method, mode=self.mode)
 		decipher_out = decipher.DecryptWithoutAuth(data=fd)
 		
-		with open(self.output, 'wb') as f:
+		if self.output is None:
+			out_filename = '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+											   str(self.filename).split('/')[-1].split('.')[1])
+		else:
+			out_filename = os.path.join(self.output, '{0}_SymDec.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+											   str(self.filename).split('/')[-1].split('.')[1]))
+		
+		with open(out_filename, 'wb') as f:
 			padded = SymmetricPad(decipher_out)
 			padded_data = padded.unpad()
 			f.write(padded_data)
