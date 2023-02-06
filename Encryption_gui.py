@@ -2,7 +2,6 @@ import PySimpleGUI as Psg
 import Encryption
 
 Psg.theme('SandyBeach')
-POPUP = 'Psg.popup("Not Implemented")'
 SYM_MENU_BUTTONS = ["Authenticated Encryption", "Unauthenticated Encryption",
                     "Authenticated Decryption", "Unauthenticated Decryption"]
 SYM_ALGOS = ['test1', 'test2', 'test3']
@@ -24,7 +23,7 @@ def AsymMenuWindow():
     layout = [[Psg.Text("Asymmetric Encryption / Decryption",
                         font="Lucida")],
               [Psg.Button("Encryption"), Psg.Button("Decryption")],
-              [Psg.Button("Generate Keys", key="key"), Psg.Button("Exit")]]
+              [Psg.Button("Generate Keys", key="key"), Psg.Button("Back")]]
     
     return Psg.Window(title="Asymmetric Encryption / Decryption",
                       layout=layout,
@@ -38,7 +37,7 @@ def AsymEncWindow():
               [Psg.Input(key="Filename"), Psg.FileBrowse("Upload File")],
               [Psg.Input(key="PubKey"), Psg.FileBrowse("Public Key")],
               [Psg.Input(key="OutFolder"), Psg.FolderBrowse("Output Folder")],
-              [Psg.Submit(), Psg.Button("Exit")]]
+              [Psg.Submit(), Psg.Button("Back")]]
     
     return Psg.Window(title="Asymmetric Encryption",
                       layout=layout,
@@ -52,7 +51,7 @@ def AsymDecWindow():
               [Psg.Input(key="Filename"), Psg.FileBrowse("Upload Encrypted File")],
               [Psg.Input(key="PrivKey"), Psg.FileBrowse("Private Key")],
               [Psg.Input(key="OutFolder"), Psg.FolderBrowse("Output Folder")],
-              [Psg.Submit(), Psg.Button("Exit")]]
+              [Psg.Submit(), Psg.Button("Back")]]
 
     return Psg.Window(title="Asymmetric Decryption",
                       layout=layout,
@@ -67,7 +66,7 @@ def AsymGenPrivKeyWindow():
                                              key="PrivKeyFolder")],
               [Psg.Input("priv_key.pem",
                          key="PrivKeyName")],
-              [Psg.Submit(), Psg.Button("Exit")]]
+              [Psg.Submit(), Psg.Button("Back")]]
 
     return Psg.Window(title="Generate Private key",
                       layout=layout,
@@ -85,7 +84,7 @@ def AsymGenPubKeyWindow():
               [Psg.Input("pub_key.pub",
                          size=(20, 1),
                          key="PubKeyName")],
-              [Psg.Submit(), Psg.Button("Exit")]]
+              [Psg.Submit(), Psg.Button("Back")]]
 
     return Psg.Window(title="Generate Public key",
                       layout=layout,
@@ -98,7 +97,7 @@ def AsymGenKeysWindow():
                         font="Lucida")],
               [Psg.Button("Generate Private Key", key="GenPrivKey"),
                Psg.Button("Generate Public Key", key="GenPubKey")],
-              [Psg.Button("Exit", key="Exit")]]
+              [Psg.Button("Back", key="Back")]]
 
     return Psg.Window(title="Generate Keys",
                       layout=layout,
@@ -115,7 +114,7 @@ def SymMenuWindow():
                           key="SymAlgoUpdate")],
               [Psg.Button(SYM_MENU_BUTTONS[0]), Psg.Button(SYM_MENU_BUTTONS[1])],
               [Psg.Button(SYM_MENU_BUTTONS[2]), Psg.Button(SYM_MENU_BUTTONS[3])],
-              [Psg.Button("Settings"), Psg.Button("Exit")]]
+              [Psg.Button("Settings"), Psg.Button("Back")]]
     
     return Psg.Window(title="Symmetric Encryption / Decryption",
                       layout=layout,
@@ -129,7 +128,7 @@ def SymAuthEncWindow():
               [Psg.Input(key="Filename"), Psg.FileBrowse("Upload File")],
               [Psg.Input(password_char="*", key="Password"), Psg.Text("Password")],
               [Psg.Input(key="OutFolder"), Psg.FolderBrowse("Output Folder")],
-              [Psg.Submit(), Psg.Button("Exit")]]
+              [Psg.Submit(), Psg.Button("Back")]]
 
     return Psg.Window(title="Symmetric Authenticated Encryption",
                       layout=layout,
@@ -138,13 +137,13 @@ def SymAuthEncWindow():
 
 
 def SymAuthDecWindow():
-    layout = [[Psg.Text("Symmetric Authenticated Encryption",
+    layout = [[Psg.Text("Symmetric Authenticated Decryption",
                         font="Lucida")],
               [Psg.Input(), Psg.FileBrowse("Upload File")],
               [Psg.Input(password_char="*"), Psg.Text("Password")],
               [Psg.Input(key="Key"), Psg.FileBrowse("Key File")],
               [Psg.Input(key="OutFolder"), Psg.FolderBrowse("Output Folder")],
-              [Psg.Submit(), Psg.Button("Exit")]]
+              [Psg.Submit(), Psg.Button("Back")]]
     
     return Psg.Window(title="Symmetric Authenticated Encryption",
                       layout=layout,
@@ -157,7 +156,7 @@ def SymUnAuthEncWindow():
                         font="Lucida")],
               [Psg.Input(key="Filename"), Psg.FileBrowse("Upload File")],
               [Psg.Input(key="OutFolder"), Psg.FolderBrowse("Output Folder")],
-              [Psg.Submit(), Psg.Button("Exit")]]
+              [Psg.Submit(), Psg.Button("Back")]]
 
     return Psg.Window(title="Symmetric Authenticated Encryption",
                       layout=layout,
@@ -170,7 +169,7 @@ def SymUnAuthDecWindow():
                         font="Lucida")],
               [Psg.Input(key="Filename"), Psg.FileBrowse("Upload File")],
               [Psg.Input(key="OutFolder"), Psg.FolderBrowse("Output Folder")],
-              [Psg.Submit(), Psg.Button("Exit")]]
+              [Psg.Submit(), Psg.Button("Back")]]
 
     return Psg.Window(title="Symmetric Authenticated Encryption",
                       layout=layout,
@@ -183,7 +182,7 @@ def SymEncSettingWindow():
                         font="Lucida")],
               [Psg.Text("key"), Psg.Text(Encryption.DisplayConfigFile()[0])],
               [Psg.Text("iv"), Psg.Text(Encryption.DisplayConfigFile()[1])],
-              [Psg.Button("Regenerate"), Psg.Button("Exit")]]
+              [Psg.Button("Regenerate"), Psg.Button("Back")]]
     
     return Psg.Window(title="Symmetric Encryption / Decryption Config",
                       layout=layout,
@@ -196,7 +195,7 @@ def AsymEncWindowFunc():
     
     while True:
         event, values = asym_enc_window.read()
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
 
         if event == "Submit":
@@ -205,8 +204,9 @@ def AsymEncWindowFunc():
             enc_file.AsymmetricEncFile(pub_key=values.get("PubKey"))
             Psg.Popup("Successful",
                       location=(800, 600))
-    
+
     asym_enc_window.close()
+    AsymMenuWindowFunc()
 
 
 def AsymDecWindowFunc():
@@ -215,16 +215,18 @@ def AsymDecWindowFunc():
     while True:
         event, values = asym_dec_window.read()
         
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
+        
         if event == "Submit":
             dec_file = Encryption.AsymmetricEncDecFile(filename=values.get("Filename"),
                                                        output_folder=values.get("OutFolder"))
             dec_file.AsymmetricDecFile(priva_key=values.get("PrivKey"))
             Psg.Popup("Successful",
                       location=(800, 600))
-            
+
     asym_dec_window.close()
+    AsymMenuWindowFunc()
 
 
 def AsymGenPrivKeyWindowFunc():
@@ -232,13 +234,14 @@ def AsymGenPrivKeyWindowFunc():
 
     while True:
         event, values = asym_gen_priv_key_window.read()
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
     
         if event == "Submit":
             print("AsymGenPrivKeyWindowFunc:\n", values)
 
     asym_gen_priv_key_window.close()
+    AsymMenuWindowFunc()
 
 
 def AsymGenPubKeyWindowFunc():
@@ -246,13 +249,14 @@ def AsymGenPubKeyWindowFunc():
     
     while True:
         event, values = asym_gen_pub_key_window.read()
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
         
         if event == "Submit":
             print("AsymGenPrivKeyWindowFunc:\n", values)
-            
+
     asym_gen_pub_key_window.close()
+    AsymMenuWindowFunc()
 
 
 def AsymGenKeysWindowFunc():
@@ -260,7 +264,7 @@ def AsymGenKeysWindowFunc():
     
     while True:
         event, values = asym_gen_keys_window.read()
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
         if event == "GenPrivKey":
             AsymGenPrivKeyWindowFunc()
@@ -269,6 +273,7 @@ def AsymGenKeysWindowFunc():
             AsymGenPubKeyWindowFunc()
     
     asym_gen_keys_window.close()
+    AsymMenuWindowFunc()
 
 
 def AsymMenuWindowFunc():
@@ -276,18 +281,23 @@ def AsymMenuWindowFunc():
     
     while True:
         event, values = asym_menu_window.read()
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
-        if event == "Encryption":
-            AsymEncWindowFunc()
         
+        if event == "Encryption":
+            asym_menu_window.close()
+            AsymEncWindowFunc()
+            
         elif event == "Decryption":
+            asym_menu_window.close()
             AsymDecWindowFunc()
         
         elif event == "key":
+            asym_menu_window.close()
             AsymGenKeysWindowFunc()
-    
+
     asym_menu_window.close()
+    main()
 
 
 def SymAuthEncWindowFunc():
@@ -295,7 +305,7 @@ def SymAuthEncWindowFunc():
     
     while True:
         event, values = sym_auth_enc_window.read()
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
         if event == "Submit":
             enc_file = Encryption.SymmetricEncDecFileWithAuth(filename=values.get("Filename"),
@@ -304,6 +314,7 @@ def SymAuthEncWindowFunc():
             enc_file.SymmetricEncFile()
     
     sym_auth_enc_window.close()
+    SymMenuWindowFunc()
 
 
 def SymUnauthEncWindowFunc():
@@ -311,15 +322,16 @@ def SymUnauthEncWindowFunc():
     
     while True:
         event, values = sym_unauth_enc_window.read()
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
         
         if event == "Submit":
             enc_file = Encryption.SymmetricEncDecFileWithoutAuth(filename=values.get("Filename"),
                                                                  output=values.get("OutFolder"))
             enc_file.SymmetricEncWithoutAuth()
-    
+
     sym_unauth_enc_window.close()
+    SymMenuWindowFunc()
 
 
 def SymAuthDecWindowFunc():
@@ -328,7 +340,7 @@ def SymAuthDecWindowFunc():
     while True:
         event, values = sym_auth_dec_window.read()
         
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
         
         if event == "Submit":
@@ -339,6 +351,7 @@ def SymAuthDecWindowFunc():
             dec_file.SymmetricDecFile(key=values.get("Key"))
     
     sym_auth_dec_window.close()
+    SymMenuWindowFunc()
 
 
 def SymUnAuthDecWindowFunc():
@@ -347,7 +360,7 @@ def SymUnAuthDecWindowFunc():
     while True:
         event, values = sym_unauth_dec_window.read()
         
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
         
         if event == "Submit":
@@ -356,6 +369,7 @@ def SymUnAuthDecWindowFunc():
             dec_file.SymmetricDecWithoutAuth()
     
     sym_unauth_dec_window.close()
+    SymMenuWindowFunc()
 
 
 def SymSettingWindowFunc():
@@ -364,13 +378,16 @@ def SymSettingWindowFunc():
     while True:
         event, values = sym_enc_setting_window.read()
         
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
 
         if event == "Regenerate":
             Encryption.GenerateConfigFile()
+            sym_enc_setting_window.close()
+            SymSettingWindowFunc()
     
     sym_enc_setting_window.close()
+    SymMenuWindowFunc()
 
 
 def SymMenuWindowFunc():
@@ -378,21 +395,26 @@ def SymMenuWindowFunc():
     
     while True:
         event, values = sym_menu_window.read()
-        if event in (Psg.WIN_CLOSED, "Exit"):
+        if event in (Psg.WIN_CLOSED, "Back"):
             break
         if event == SYM_MENU_BUTTONS[0]:
+            sym_menu_window.close()
             SymAuthEncWindowFunc()
         
         elif event == SYM_MENU_BUTTONS[1]:
+            sym_menu_window.close()
             SymUnauthEncWindowFunc()
         
         elif event == SYM_MENU_BUTTONS[2]:
+            sym_menu_window.close()
             SymAuthDecWindowFunc()
         
         elif event == SYM_MENU_BUTTONS[3]:
+            sym_menu_window.close()
             SymUnAuthDecWindowFunc()
         
         elif event == "Settings":
+            sym_menu_window.close()
             SymSettingWindowFunc()
         
         elif event == "SymAlgoUpdate":
@@ -409,10 +431,13 @@ def main():
         if event in (Psg.WIN_CLOSED, "Exit"):
             break
         if event == "Asymmetric Encryption":
+            main_menu_window.close()
             AsymMenuWindowFunc()
                     
         elif event == "Symmetric Encryption":
+            main_menu_window.close()
             SymMenuWindowFunc()
+
     main_menu_window.close()
 
 
