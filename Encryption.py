@@ -178,21 +178,25 @@ class SymmetricPad:
 
 
 class SymmetricEncDecFileWithAuth:
-	def __init__(self, filename, auth_tag, output=None, config_file='cfg.ini'):
+	def __init__(self, filename, auth_tag, enc_algo, output=None, config_file='cfg.ini'):
 		self.filename = filename
 		self.auth_tag = auth_tag.encode()
 		self.output = output
 		
 		self.key, self.iv = ReadConfigFile(config_file=config_file)
+		self.enc_algo = enc_algo
 		
-		self.method = algorithms.AES(self.key)
-	
+		match self.enc_algo:
+			case "AES GCM":
+				self.method = algorithms.AES(self.key)
+				self.mode = modes.GCM(self.iv)
+		
 	def SymmetricEncFile(self):
-		mode = modes.GCM(self.iv)
+		# mode = modes.GCM(self.iv)
 		with open(self.filename, 'rb') as f:
 			f_read = f.read()
 		
-		enc = SymmetricEncryptionWithAuth(method=self.method, mode=mode, tag=self.auth_tag)
+		enc = SymmetricEncryptionWithAuth(method=self.method, mode=self.mode, tag=self.auth_tag)
 		enc_data, auth_tag_out = enc.EncryptWithAuth(f_read)
 		
 		out_filename = '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
@@ -226,21 +230,51 @@ class SymmetricEncDecFileWithAuth:
 
 
 class SymmetricEncDecFileWithoutAuth:
-	def __init__(self, filename, output, config_file='cfg.ini'):
+	def __init__(self, filename, enc_algo, output, config_file='cfg.ini'):
 		self.filename = filename
 		self.key, self.iv = ReadConfigFile(config_file=config_file)
 		self.output = output
 		
-		self.method = algorithms.AES(self.key)
-		self.mode = modes.CBC(self.iv)
-	
+		self.enc_algo = enc_algo
+		
+		match self.enc_algo:
+			case "AES ECB":
+				self.method = algorithms.AES(self.key)
+				self.mode = modes.ECB()
+			case "AES CBC":
+				self.method = algorithms.AES(self.key)
+				self.mode = modes.CBC(self.iv)
+			case "AES OFB":
+				self.method = algorithms.AES(self.key)
+				self.mode = modes.OFB(self.iv)
+			case "AES CTR":
+				self.method = algorithms.AES(self.key)
+				self.mode = modes.CTR(self.iv)
+			case "Blowfish ECB":
+				self.method = algorithms.Blowfish(self.key)
+				self.mode = modes.ECB()
+			case "Blowfish CBC":
+				self.method = algorithms.Blowfish(self.key)
+				self.modes = modes.CBC(self.iv[:8])
+			case "ChaCha20":
+				self.method = algorithms.ChaCha20(self.key, self.iv)
+			case "3DES CBC":
+				self.method = algorithms.TripleDES(self.key[:16])
+				self.mode = modes.ECB()
+			case "Camellia ECB":
+				self.method = algorithms.Camellia(self.key)
+				self.mode = modes.CBC(self.iv[:8])
+			case "Camellia CBC":
+				self.method = algorithms.Camellia(self.key)
+				self.mode = modes.CBC(self.iv)
+
 	def SymmetricEncWithoutAuth(self):
 		with open(self.filename, 'rb') as f:
 			f_read = f.read()
 		
 		padded = SymmetricPad(f_read)
 		padded_data = padded.pad()
-		
+	
 		cipher = SymmetricEncryption(method=self.method, mode=self.mode)
 		cipher_out = cipher.EncryptWithoutAuth(data=padded_data)
 		
