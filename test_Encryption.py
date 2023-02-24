@@ -58,24 +58,24 @@ class TestEnc(unittest.TestCase):
 		os.chdir(os.path.join(self.cwd, self.test_key_folder))
 		key = Encryption.AsymmetricEncryptionPrivateKey('PrivKey.pem')
 		load_priv_key = key.LoadPrivKey()
-		self.assertEqual(isinstance(load_priv_key, cryptography_test._RSAPrivateKey), True)
+		self.assertTrue(isinstance(load_priv_key, cryptography_test._RSAPrivateKey))
 
 	def test_LoadPubKey(self):
 		os.chdir(os.path.join(self.cwd, self.test_key_folder))
 		key = Encryption.AsymmetricEncryptionPublicKey('PubKey.pub')
 		key.GenPublicKey('PrivKey.pem')
 		load_pub_key = key.LoadPubKey()
-		self.assertEqual(isinstance(load_pub_key, cryptography_test._RSAPublicKey), True)
+		self.assertTrue(isinstance(load_pub_key, cryptography_test._RSAPublicKey))
 		
 	def test_configFileKey(self):
 		os.chdir(os.path.join(self.cwd, self.test_key_folder))
 		key = Encryption.DisplayConfigFile()[0]
-		self.assertEqual(isinstance(key, str), True)
+		self.assertTrue(isinstance(key, str))
 		
 	def test_configFileIV(self):
 		os.chdir(os.path.join(self.cwd, self.test_key_folder))
 		iv = Encryption.DisplayConfigFile()[1]
-		self.assertEqual(isinstance(iv, str), True)
+		self.assertTrue(isinstance(iv, str))
 		
 	
 if __name__ == "__main__":
