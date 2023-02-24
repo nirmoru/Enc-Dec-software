@@ -2,7 +2,7 @@ import unittest
 import Encryption
 import os
 import shutil
-import cryptography as cryptography_test
+import cryptography.hazmat.backends.openssl.rsa as cryptography_test
 
 
 class TestEnc(unittest.TestCase):
@@ -58,14 +58,14 @@ class TestEnc(unittest.TestCase):
 		os.chdir(os.path.join(self.cwd, self.test_key_folder))
 		key = Encryption.AsymmetricEncryptionPrivateKey('PrivKey.pem')
 		load_priv_key = key.LoadPrivKey()
-		self.assertEqual(isinstance(load_priv_key, cryptography_test.hazmat.backends.openssl.rsa._RSAPrivateKey), True)
+		self.assertEqual(isinstance(load_priv_key, cryptography_test._RSAPrivateKey), True)
 
 	def test_LoadPubKey(self):
 		os.chdir(os.path.join(self.cwd, self.test_key_folder))
 		key = Encryption.AsymmetricEncryptionPublicKey('PubKey.pub')
 		key.GenPublicKey('PrivKey.pem')
 		load_pub_key = key.LoadPubKey()
-		self.assertEqual(isinstance(load_pub_key, cryptography_test.hazmat.backends.openssl.rsa._RSAPublicKey), True)
+		self.assertEqual(isinstance(load_pub_key, cryptography_test._RSAPublicKey), True)
 		
 	def test_configFileKey(self):
 		os.chdir(os.path.join(self.cwd, self.test_key_folder))
