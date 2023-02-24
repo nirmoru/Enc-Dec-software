@@ -70,12 +70,12 @@ class TestEnc(unittest.TestCase):
 	def test_configFileKey(self):
 		os.chdir(os.path.join(self.cwd, self.test_key_folder))
 		key = Encryption.DisplayConfigFile()[0]
-		self.assertTrue(isinstance(key, str))
+		self.assertEqual(key, "RXsTXcI5Yn9DvJSJWU/wUkhLHcRDmZkjesTYH5JV2QE=")
 		
 	def test_configFileIV(self):
 		os.chdir(os.path.join(self.cwd, self.test_key_folder))
 		iv = Encryption.DisplayConfigFile()[1]
-		self.assertTrue(isinstance(iv, str))
+		self.assertEqual(iv, "OGhyY0q4crlzG0eyPrA2Gg==")
 		
 	
 if __name__ == "__main__":
