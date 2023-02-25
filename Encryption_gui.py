@@ -1,5 +1,6 @@
 import PySimpleGUI as Psg
 import Encryption
+import os
 
 Psg.theme('SandyBeach')
 SYM_MENU_BUTTONS = ["Authenticated Encryption", "Unauthenticated Encryption",
@@ -265,7 +266,9 @@ def AsymGenPrivKeyWindowFunc():
             break
     
         if event == "Submit":
-            print("AsymGenPrivKeyWindowFunc:\n", values)
+            priv_key = Encryption.AsymmetricEncryptionPrivateKey(os.path.join(values.get('PrivKeyFolder'), values.get('PrivKeyName')))
+            priv_key.GenRSAPrivKey()
+            Psg.Popup("Successfully created Private Key.")
 
     asym_gen_priv_key_window.close()
     AsymGenKeysWindowFunc()
@@ -280,7 +283,9 @@ def AsymGenPubKeyWindowFunc():
             break
         
         if event == "Submit":
-            print("AsymGenPrivKeyWindowFunc:\n", values)
+            pub_key = Encryption.AsymmetricEncryptionPublicKey(os.path.join(values.get('PubKeyFolder'), values.get('PubKeyName')))
+            pub_key.GenPublicKey(values.get('PrivKey'))
+            Psg.Popup("Successfully created Public Key.")
 
     asym_gen_pub_key_window.close()
     AsymGenKeysWindowFunc()
