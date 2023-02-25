@@ -6,7 +6,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding as sym_padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.asymmetric import padding as asymm_padding
+from cryptography.hazmat.primitives.asymmetric import padding as asym_padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.serialization import load_pem_private_key, load_pem_public_key
 
@@ -73,8 +73,8 @@ class AsymmetricEncDecFile:
 		
 		encrypted = public_key.encrypt(
 			f_read,
-			asymm_padding.OAEP(
-				mgf=asymm_padding.MGF1(algorithm=hashes.SHA256()),
+			asym_padding.OAEP(
+				mgf=asym_padding.MGF1(algorithm=hashes.SHA256()),
 				algorithm=hashes.SHA256(),
 				label=None
 			)
@@ -99,8 +99,8 @@ class AsymmetricEncDecFile:
 		
 		dec = private_key.decrypt(
 			file_content,
-			asymm_padding.OAEP(
-				mgf=asymm_padding.MGF1(algorithm=hashes.SHA256()),
+			asym_padding.OAEP(
+				mgf=asym_padding.MGF1(algorithm=hashes.SHA256()),
 				algorithm=hashes.SHA256(),
 				label=None
 			)
@@ -199,8 +199,8 @@ class SymmetricEncDecFileWithAuth:
 		enc = SymmetricEncryptionWithAuth(method=self.method, mode=self.mode, tag=self.auth_tag)
 		enc_data, auth_tag_out = enc.EncryptWithAuth(f_read)
 		
-		out_filename = '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
-												   str(self.filename).split('/')[-1].split('.')[1])
+		out_filename = os.path.join(self.output, '{0}_AuthSymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+												   str(self.filename).split('/')[-1].split('.')[1]))
 		
 		encrypted = base64.b64encode(enc_data)
 		enc_auth_tag = base64.b64encode(auth_tag_out)
@@ -225,7 +225,11 @@ class SymmetricEncDecFileWithAuth:
 		dec = SymmetricEncryptionWithAuth(method=self.method, mode=mode, tag=self.auth_tag)
 		plain_data = dec.DecryptWithAuth(data=decoded_data)
 		
-		with open(self.output, 'wb') as f:
+		out_filename = os.path.join(self.output,
+									'{0}_AuthSymDec.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+															str(self.filename).split('/')[-1].split('.')[1]))
+		
+		with open(out_filename, 'wb') as f:
 			f.write(plain_data)
 
 
@@ -282,7 +286,7 @@ class SymmetricEncDecFileWithoutAuth:
 			out_filename = '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
 											   str(self.filename).split('/')[-1].split('.')[1])
 		else:
-			out_filename = os.path.join(self.output, '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+			out_filename = os.path.join(self.output, '{0}_UnauthSymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
 											   str(self.filename).split('/')[-1].split('.')[1]))
 		
 		with open(out_filename, 'wb') as f:
@@ -301,7 +305,7 @@ class SymmetricEncDecFileWithoutAuth:
 			out_filename = '{0}_SymEnc.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
 											   str(self.filename).split('/')[-1].split('.')[1])
 		else:
-			out_filename = os.path.join(self.output, '{0}_SymDec.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
+			out_filename = os.path.join(self.output, '{0}_UnauthSymDec.{1}'.format(str(self.filename).split('/')[-1].split('.')[0],
 											   str(self.filename).split('/')[-1].split('.')[1]))
 		
 		with open(out_filename, 'wb') as f:
