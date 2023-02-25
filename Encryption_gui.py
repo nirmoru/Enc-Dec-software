@@ -352,7 +352,6 @@ def SymAuthEncWindowFunc():
         if event in (Psg.WIN_CLOSED, "Back"):
             break
         if event == "Submit":
-            # print(values)
             enc_file = Encryption.SymmetricEncDecFileWithAuth(filename=values.get("Filename"),
                                                               auth_tag=values.get('Password'),
                                                               enc_algo=values.get("SymAlgo"),
@@ -393,7 +392,6 @@ def SymAuthDecWindowFunc():
             break
         
         if event == "Submit":
-            # print(values)
             dec_file = Encryption.SymmetricEncDecFileWithAuth(filename=values.get("Filename"),
                                                               auth_tag=values.get('Password'),
                                                               enc_algo=values.get("SymAlgo"),
